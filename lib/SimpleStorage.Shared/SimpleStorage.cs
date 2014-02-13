@@ -1,10 +1,9 @@
 using System;
-using System.Xml.Serialization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace PerpetualEngine.Storage
 {
@@ -177,22 +176,15 @@ namespace PerpetualEngine.Storage
             var result = Get<T> (key);
             return result;
         }
-        // taken from http://stackoverflow.com/questions/2861722/binary-serialization-and-deserialization-without-creating-files-via-strings
-        static string SerializeObject<T>(T o)
+
+        static string SerializeObject (object o)
         {
-            using (MemoryStream stream = new MemoryStream()) {
-                new BinaryFormatter ().Serialize (stream, o);
-                return Convert.ToBase64String (stream.ToArray ());
-            }
+		return JsonConvert.SerializeObject (o);
         }
-        // taken from http://stackoverflow.com/questions/2861722/binary-serialization-and-deserialization-without-creating-files-via-strings
+
         T DeserializeObject<T>(string str)
         {
-            byte[] bytes = Convert.FromBase64String (str);
-
-            using (MemoryStream stream = new MemoryStream(bytes)) {
-                return (T)new BinaryFormatter ().Deserialize (stream);
-            }
+		return JsonConvert.DeserializeObject<T> (str);
         }
     }
 }
